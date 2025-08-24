@@ -7,7 +7,7 @@ public class Rectangle2D
 
     public Rectangle2D(Point2D topLeft, Point2D bottomRight)
     {
-        if (bottomRight.X <= topLeft.X || bottomRight.Y <= topLeft.Y)
+        if (bottomRight.X <= topLeft.X || bottomRight.Y >= topLeft.Y)
         {
             throw new ArgumentException("Invalid rectangle: width and height must be positive");
         }
@@ -22,7 +22,7 @@ public class Rectangle2D
 
     public double Width => bottomRight.X - topLeft.X;
 
-    public double Height => bottomRight.Y - topLeft.Y;
+    public double Height => topLeft.Y - bottomRight.Y;
 
     public double Diagonal => topLeft.DistanceTo(bottomRight);
 
@@ -37,7 +37,7 @@ public class Rectangle2D
     public bool Contains(Point2D p)
     {
         return p.X >= topLeft.X && p.X <= bottomRight.X
-            && p.Y >= topLeft.Y && p.Y <= bottomRight.Y;
+            && p.Y <= topLeft.Y && p.Y >= bottomRight.Y;
     }
 
     public bool IntersectsWith(Rectangle2D other)
@@ -45,8 +45,8 @@ public class Rectangle2D
         return !(
             other.bottomRight.X < topLeft.X ||
             other.topLeft.X > bottomRight.X ||
-            other.bottomRight.Y < topLeft.Y ||
-            other.topLeft.Y > bottomRight.Y);
+            other.topLeft.Y < bottomRight.Y ||
+            other.bottomRight.Y > topLeft.Y);
     }
 
     public static Rectangle2D GetBoundingBox(IEnumerable<Point2D> points)
@@ -61,6 +61,6 @@ public class Rectangle2D
         double maxX = points.Max(p => p.X);
         double maxY = points.Max(p => p.Y);
 
-        return new Rectangle2D(new Point2D(minX, minY), new Point2D(maxX, maxY));
+        return new Rectangle2D(new Point2D(minX, maxY), new Point2D(maxX, minY));
     }
 }

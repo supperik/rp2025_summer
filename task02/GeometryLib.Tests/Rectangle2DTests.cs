@@ -11,16 +11,15 @@ public class Rectangle2DTests
     [Fact]
     public void Cannot_create_invalid_rectangle()
     {
-        // ширина и высота должны быть положительные
-        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(0, 0), new Point2D(0, 0)));
-        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(1, 1), new Point2D(0, 0)));
-        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(0, 5), new Point2D(5, 4)));
+        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(0, 0), new Point2D(0, 0))); // ширина и высота = 0
+        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(1, 1), new Point2D(0, 2))); // topLeft.X > bottomRight.X
+        Assert.Throws<ArgumentException>(() => new Rectangle2D(new Point2D(0, 1), new Point2D(5, 2))); // topLeft.Y < bottomRight.Y
     }
 
     [Fact]
     public void Can_calculate_area_and_perimeter()
     {
-        Rectangle2D rect = new Rectangle2D(new Point2D(0, 0), new Point2D(3, 2));
+        Rectangle2D rect = new Rectangle2D(new Point2D(0, 2), new Point2D(3, 0));
         Assert.Equal(6, rect.Area, precision: Point2D.Precision);
         Assert.Equal(10, rect.Perimeter, precision: Point2D.Precision);
     }
@@ -28,7 +27,7 @@ public class Rectangle2DTests
     [Fact]
     public void Can_calculate_diagonal()
     {
-        Rectangle2D rect = new Rectangle2D(new Point2D(0, 0), new Point2D(3, 4));
+        Rectangle2D rect = new Rectangle2D(new Point2D(0, 4), new Point2D(3, 0));
 
         Assert.Equal(5, rect.Diagonal, precision: Point2D.Precision);
     }
@@ -36,7 +35,7 @@ public class Rectangle2DTests
     [Fact]
     public void Can_calculate_center()
     {
-        Rectangle2D rect = new Rectangle2D(new Point2D(0, 0), new Point2D(4, 4));
+        Rectangle2D rect = new Rectangle2D(new Point2D(0, 4), new Point2D(4, 0));
 
         Assert.Equal(new Point2D(2, 2), rect.Center);
     }
@@ -44,7 +43,7 @@ public class Rectangle2DTests
     [Fact]
     public void Can_check_contains_point()
     {
-        Rectangle2D rect = new Rectangle2D(new Point2D(0, 0), new Point2D(4, 4));
+        Rectangle2D rect = new Rectangle2D(new Point2D(0, 4), new Point2D(4, 0));
         Assert.True(rect.Contains(new Point2D(2, 2)));
         Assert.False(rect.Contains(new Point2D(5, 5)));
     }
@@ -52,9 +51,9 @@ public class Rectangle2DTests
     [Fact]
     public void Can_check_intersection()
     {
-        Rectangle2D rect1 = new Rectangle2D(new Point2D(0, 0), new Point2D(4, 4));
-        Rectangle2D rect2 = new Rectangle2D(new Point2D(2, 2), new Point2D(6, 6));
-        Rectangle2D rect3 = new Rectangle2D(new Point2D(5, 5), new Point2D(7, 7));
+        Rectangle2D rect1 = new Rectangle2D(new Point2D(0, 4), new Point2D(4, 0));
+        Rectangle2D rect2 = new Rectangle2D(new Point2D(2, 6), new Point2D(6, 2));
+        Rectangle2D rect3 = new Rectangle2D(new Point2D(5, 7), new Point2D(7, 5));
 
         Assert.True(rect1.IntersectsWith(rect2));
         Assert.False(rect1.IntersectsWith(rect3));
@@ -72,8 +71,8 @@ public class Rectangle2DTests
 
         Rectangle2D box = Rectangle2D.GetBoundingBox(points);
 
-        Assert.Equal(new Point2D(0, 0), box.TopLeft);
-        Assert.Equal(new Point2D(2, 3), box.BottomRight);
+        Assert.Equal(new Point2D(0, 3), box.TopLeft);
+        Assert.Equal(new Point2D(2, 0), box.BottomRight);
     }
 
     [Fact]
@@ -87,7 +86,6 @@ public class Rectangle2DTests
     {
         Point2D[] points = new[] { new Point2D(1, 1) };
 
-        // Здесь должно упасть исключение, потому что ширина/высота == 0
         Assert.Throws<ArgumentException>(() => Rectangle2D.GetBoundingBox(points));
     }
 }
